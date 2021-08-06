@@ -1,12 +1,27 @@
 <template>
   <div class="top">
     <img src="../assets/01.top.jpg" alt="" />
-    <input type="text" />
+    <input type="text" v-model="inputValue" @keyup.enter="toSearch" />
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      inputValue: "",
+    };
+  },
+  methods: {
+    toSearch() {
+      if (this.inputValue == "") {
+        alert("请输入内容！");
+      } else {
+        this.$routers.push("/result");
+      }
+    },
+  },
+};
 </script>
 
 <style>
