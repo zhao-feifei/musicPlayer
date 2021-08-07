@@ -3,28 +3,18 @@
     <!-- 同步 -->
     <div class="top-card">
       <div class="icon-wrap">
-        <img src="../assets/listCover.jpg" alt="" />
+        <img :src="topList.coverImgUrl" alt="" />
       </div>
       <div class="content-wrap">
         <div class="tag">精品歌单</div>
         <div class="title">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, laborum.
+          {{ topList.name }}
         </div>
         <div class="info">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci
-          velit suscipit cumque incidunt ad vitae quos dicta temporibus, at,
-          labore harum libero. Officiis commodi illo, minus sed ad ab provident,
-          maxime nobis culpa esse iste quibusdam! Doloribus itaque quia
-          recusandae? Incidunt cumque non et minus magni dolores repudiandae
-          quia quas esse ipsam labore doloremque, maxime nobis odio ab.
-          Distinctio nemo nostrum numquam dolores labore laboriosam doloremque
-          harum vero aliquam sit et quam laborum magnam animi, quae beatae
-          fugiat sapiente! Perspiciatis libero atque ratione quam reprehenderit
-          numquam distinctio. Maxime reprehenderit, dicta placeat enim
-          laudantium voluptatem, ab eveniet nulla asperiores minima quidem!
+          {{ topList.description }}
         </div>
       </div>
-      <img src="../assets/listCover.jpg" alt="" class="bg" />
+      <img :src="topList.coverImgUrl" class="bg" />
       <div class="bg-mask"></div>
     </div>
     <div class="tab-container">
@@ -59,105 +49,6 @@
             </div>
             <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
           </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
-          <div class="item">
-            <div class="img-wrap">
-              <div class="num-wrap">
-                播放量:
-                <span class="num">66892</span>
-              </div>
-              <img src="../assets/cover.jpg" alt="" />
-              <span class="iconfont icon-play"></span>
-            </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
-          </div>
         </div>
       </div>
     </div>
@@ -175,24 +66,38 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
-  name: 'recommend',
+  name: "recommend",
   data() {
     return {
       // 总条数
-      total:0,
+      total: 0,
       // 页码
-      page:1
+      page: 1,
+      //顶部的推荐歌单
+      topList: {},
     };
+  },
+  created() {
+    axios({
+      method: "get",
+      url: "https://autumnfish.cn/top/playlist/highquality",
+      data: {
+        limt: 10,
+        cat: "全部",
+      },
+    }).then((res) => {
+      this.topList = res.data.playlists[0];
+      console.log(this.topList);
+    });
   },
   methods: {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style >
-
-</style>
+<style></style>
