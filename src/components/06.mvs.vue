@@ -1,11 +1,15 @@
 <template>
   <div>
-    <img src="../assets/playListCover.jpg" alt="" />
+      <img src="../assets/06.mvs.jpg" alt="">
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+
+}
 </script>
 
-<style></style>
+<style>
+
+</style>
