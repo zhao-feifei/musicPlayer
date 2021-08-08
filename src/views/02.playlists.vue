@@ -123,13 +123,14 @@
       </div>
     </div>
     <!-- 分页器 -->
+    <!-- current-change是一个页码绑定事件 -->
     <el-pagination
       @current-change="handleCurrentChange"
       background
       layout="prev, pager, next"
       :total="total"
       :current-page="page"
-      :page-size="20"
+      :page-size="10"
     >
     </el-pagination>
   </div>
@@ -155,56 +156,58 @@ export default {
   },
   watch: {
     tag() {
+      //顶部精品歌单
+      this.topData();
+      //获取歌单列表
+      this.listData();
+      //修改页码为1
+      this.page = 1;
+    },
+  },
+  created() {
+    //顶部精品歌单
+    this.topData();
+    //获取歌单列表
+    this.listData();
+  },
+  methods: {
+    //封装的方法1，顶部数据
+    topData() {
       axios({
         method: "get",
         url: "https://autumnfish.cn/top/playlist/highquality",
         data: {
           limt: 10,
+          //分类数据
           cat: this.tag,
         },
       }).then((res) => {
         this.topList = res.data.playlists[0];
-      }),
-        //获取歌单列表
-        axios({
-          method: "get",
-          url: "https://autumnfish.cn/top/playlist/",
-          params: {
-            limit: 10,
-            offset: 0,
-            cat: this.tag,
-          },
-        }).then((res) => {
-          this.list = res.data.playlists;
-        });
+      });
     },
-  },
-  created() {
-    axios({
-      method: "get",
-      url: "https://autumnfish.cn/top/playlist/highquality",
-      data: {
-        limt: 10,
-        cat: "全部",
-      },
-    }).then((res) => {
-      this.topList = res.data.playlists[0];
-    }),
-      //获取歌单列表
+    //封装的方法2，列表数据
+    listData() {
       axios({
         method: "get",
         url: "https://autumnfish.cn/top/playlist/",
         params: {
           limit: 10,
-          offset: 0,
-          cat: "全部",
+          //起始的值   （页码-1）*每页数据条数
+          offset: (this.page - 1) * 10,
+          //分类数据
+          cat: this.tag,
         },
       }).then((res) => {
+        this.total = res.data.total;
         this.list = res.data.playlists;
       });
-  },
-  methods: {
+    },
+    //页码改变事件
     handleCurrentChange(val) {
+      //保存页码
+      this.page = val;
+      //重新获取数据
+      this.listData();
       console.log(`当前页: ${val}`);
     },
   },
