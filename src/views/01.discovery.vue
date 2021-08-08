@@ -112,7 +112,7 @@ export default {
       method: "get",
       url: "https://autumnfish.cn/personalized/mv",
     }).then((res) => {
-      console.log(res);
+      // console.log(res);
       this.mvs = res.data.result;
     });
   },
