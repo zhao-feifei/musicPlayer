@@ -20,34 +20,104 @@
     <div class="tab-container">
       <!-- tab栏 顶部 -->
       <div class="tab-bar">
-        <span class="item active">全部</span>
-        <span class="item">欧美</span>
-        <span class="item">华语</span>
-        <span class="item">流行</span>
-        <span class="item">说唱</span>
-        <span class="item">摇滚</span>
-        <span class="item">民谣</span>
-        <span class="item">电子</span>
-        <span class="item">轻音乐</span>
-        <span class="item">影视原声</span>
-        <span class="item">ACG</span>
-        <span class="item">怀旧</span>
-        <span class="item">治愈</span>
-        <span class="item">旅行</span>
+        <span
+          class="item"
+          :class="{ active: tag == '全部' }"
+          @click="tag = '全部'"
+          >全部</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '欧美' }"
+          @click="tag = '欧美'"
+          >欧美</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '华语' }"
+          @click="tag = '华语'"
+          >华语</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '流行' }"
+          @click="tag = '流行'"
+          >流行</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '说唱' }"
+          @click="tag = '说唱'"
+          >说唱</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '摇滚' }"
+          @click="tag = '摇滚'"
+          >摇滚</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '民谣' }"
+          @click="tag = '民谣'"
+          >民谣</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '电子' }"
+          @click="tag = '电子'"
+          >电子</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '轻音乐' }"
+          @click="tag = '轻音乐'"
+          >轻音乐</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '影视原声' }"
+          @click="tag = '影视原声'"
+          >影视原声</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == 'ACG' }"
+          @click="tag = 'ACG'"
+          >ACG</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '怀旧' }"
+          @click="tag = '怀旧'"
+          >怀旧</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '治愈' }"
+          @click="tag = '治愈'"
+          >治愈</span
+        >
+        <span
+          class="item"
+          :class="{ active: tag == '旅行' }"
+          @click="tag = '旅行'"
+          >旅行</span
+        >
       </div>
       <!-- tab的内容区域 -->
       <div class="tab-content">
         <div class="items">
-          <div class="item">
+          <div class="item" v-for="(item, index) in list" :key="index">
             <div class="img-wrap">
               <div class="num-wrap">
                 播放量:
-                <span class="num">66892</span>
+                <span class="num">{{ item.playCount }}</span>
               </div>
-              <img src="../assets/cover.jpg" alt="" />
+              <img :src="item.coverImgUrl" alt="" />
               <span class="iconfont icon-play"></span>
             </div>
-            <p class="name">编辑推荐：一起探索这个未知的音乐罐头吧！</p>
+            <p class="name">{{ item.name }}</p>
           </div>
         </div>
       </div>
@@ -77,7 +147,37 @@ export default {
       page: 1,
       //顶部的推荐歌单
       topList: {},
+      //歌单列表
+      list: [],
+      //当前选中的分类
+      tag: "全部",
     };
+  },
+  watch: {
+    tag() {
+      axios({
+        method: "get",
+        url: "https://autumnfish.cn/top/playlist/highquality",
+        data: {
+          limt: 10,
+          cat: this.tag,
+        },
+      }).then((res) => {
+        this.topList = res.data.playlists[0];
+      }),
+        //获取歌单列表
+        axios({
+          method: "get",
+          url: "https://autumnfish.cn/top/playlist/",
+          params: {
+            limit: 10,
+            offset: 0,
+            cat: this.tag,
+          },
+        }).then((res) => {
+          this.list = res.data.playlists;
+        });
+    },
   },
   created() {
     axios({
@@ -89,8 +189,19 @@ export default {
       },
     }).then((res) => {
       this.topList = res.data.playlists[0];
-      console.log(this.topList);
-    });
+    }),
+      //获取歌单列表
+      axios({
+        method: "get",
+        url: "https://autumnfish.cn/top/playlist/",
+        params: {
+          limit: 10,
+          offset: 0,
+          cat: "全部",
+        },
+      }).then((res) => {
+        this.list = res.data.playlists;
+      });
   },
   methods: {
     handleCurrentChange(val) {
