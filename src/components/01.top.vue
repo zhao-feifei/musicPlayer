@@ -13,11 +13,14 @@
     </div>
     <div class="right-box">
       <div class="el-input el-input--small el-input--prefix">
+        <!-- 搜索框 -->
         <input
           type="text"
           autocomplete="off"
           placeholder="搜索"
           class="el-input__inner"
+          v-model="inputValue"
+          @keyup.enter="toResult"
         />
         <span class="el-input__prefix">
           <i class="el-input__icon el-icon-search"></i>
@@ -28,14 +31,24 @@
 </template>
 
 <script>
-  export default {
-    name: 'top',
-    data() {
-      return {
-        query: ''
+export default {
+  name: "top",
+  data() {
+    return {
+      //搜索框的输入值
+      inputValue: "",
+    };
+  },
+  methods: {
+    toResult() {
+      if (this.inputValue === "") {
+        this.$message.warning("请输入内容");
+      } else {
+        this.$router.push("/result?q=" + this.inputValue).catch((err) => err);
       }
-    }
-  }
+    },
+  },
+};
 </script>
 
 <style scoped></style>
