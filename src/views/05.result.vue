@@ -162,7 +162,7 @@ export default {
       }).then((res) => {
         //获取的是歌曲
         if (type == 1) {
-          //歌曲
+         
           this.songList = res.data.result.songs;
           //处理时间格式
           for (let i = 0; i < this.songList.length; i++) {
