@@ -79,23 +79,29 @@
           </tbody>
         </table>
       </el-tab-pane>
-      <el-tab-pane label="评论(66)" name="2">
+      <el-tab-pane label="评论" name="2">
         <!-- 精彩评论 -->
         <div class="comment-wrap">
-          <p class="title">精彩评论<span class="number">(666)</span></p>
+          <p class="title">
+            精彩评论<span class="number">({{ hotCount }})</span>
+          </p>
           <div class="comments-wrap">
-            <div class="item">
+            <div class="item" v-for="(item, index) in hotComment" :key="index">
               <div class="icon-wrap">
-                <img src="../assets/avatar.jpg" alt="" />
+                <!-- 头像 -->
+                <img :src="item.user.avatarUrl" alt="" />
               </div>
               <div class="content-wrap">
                 <div class="content">
-                  <span class="name">爱斯基摩：</span>
-                  <span class="comment">谁说的，长大了依旧可爱哈</span>
+                  <span class="name">{{ item.user.nickname }}</span>
+                  <span class="comment">{{ item.content }}</span>
                 </div>
-                <div class="re-content">
-                  <span class="name">小苹果：</span>
-                  <span class="comment">还是小时候比较可爱</span>
+                <!-- 评论的回复 -->
+                <div class="re-content" v-if="item.beReplied.length != 0">
+                  <span class="name">{{
+                    item.beReplied[0].user.nickname
+                  }}</span>
+                  <span class="comment">{{ item.beReplied[0].content }}</span>
                 </div>
                 <div class="date">2020-02-12 17:26:11</div>
               </div>
@@ -104,52 +110,24 @@
         </div>
         <!-- 最新评论 -->
         <div class="comment-wrap">
-          <p class="title">最新评论<span class="number">(666)</span></p>
+          <p class="title">
+            最新评论<span class="number">({{ total }})</span>
+          </p>
           <div class="comments-wrap">
-            <div class="item">
+            <div class="item" v-for="(item, index) in comments" :key="index">
               <div class="icon-wrap">
-                <img src="../assets/avatar.jpg" alt="" />
+                <img :src="item.user.avatarUrl" alt="" />
               </div>
               <div class="content-wrap">
                 <div class="content">
-                  <span class="name">爱斯基摩：</span>
-                  <span class="comment">谁说的，长大了依旧可爱哈</span>
+                  <span class="name">{{ item.user.nickname }}</span>
+                  <span class="comment">{{ item.content }}</span>
                 </div>
-                <div class="re-content">
-                  <span class="name">小苹果：</span>
-                  <span class="comment">还是小时候比较可爱</span>
-                </div>
-                <div class="date">2020-02-12 17:26:11</div>
-              </div>
-            </div>
-            <div class="item">
-              <div class="icon-wrap">
-                <img src="../assets/avatar.jpg" alt="" />
-              </div>
-              <div class="content-wrap">
-                <div class="content">
-                  <span class="name">爱斯基摩：</span>
-                  <span class="comment">谁说的，长大了依旧可爱哈</span>
-                </div>
-                <div class="re-content">
-                  <span class="name">小苹果：</span>
-                  <span class="comment">还是小时候比较可爱</span>
-                </div>
-                <div class="date">2020-02-12 17:26:11</div>
-              </div>
-            </div>
-            <div class="item">
-              <div class="icon-wrap">
-                <img src="../assets/avatar.jpg" alt="" />
-              </div>
-              <div class="content-wrap">
-                <div class="content">
-                  <span class="name">爱斯基摩：</span>
-                  <span class="comment">谁说的，长大了依旧可爱哈</span>
-                </div>
-                <div class="re-content">
-                  <span class="name">小苹果：</span>
-                  <span class="comment">还是小时候比较可爱</span>
+                <div class="re-content" v-if="item.beReplied.length != 0">
+                  <span class="name">{{
+                    item.beReplied[0].user.nickname
+                  }}</span>
+                  <span class="comment">{{ item.beReplied[0].content }}</span>
                 </div>
                 <div class="date">2020-02-12 17:26:11</div>
               </div>
@@ -184,9 +162,16 @@ export default {
       page: 1,
       //歌单详情数据
       playlist: {},
+      //热门评论
+      hotComment: [],
+      //热门评论的个数
+      hotCount: 0,
+      //最新评论
+      comments: [],
     };
   },
   created() {
+    //获取歌单详情
     axios({
       method: "get",
       url: "https://autumnfish.cn/playlist/detail",
@@ -195,12 +180,57 @@ export default {
       },
     }).then((res) => {
       this.playlist = res.data.playlist;
-      console.log(this.playlist);
+      // console.log(this.playlist);
+    });
+    //获取评论
+    axios({
+      method: "get",
+      url: "https://autumnfish.cn/comment/hot",
+      params: {
+        id: this.$route.query.q,
+        type: 2,
+      },
+    }).then((res) => {
+      this.hotComment = res.data.hotComments;
+      this.hotCount = res.data.total;
+      // console.log(res);
+    });
+    //获取最新评论
+    axios({
+      method: "get",
+      url: "https://autumnfish.cn/comment/playlist",
+      params: {
+        id: this.$route.query.q,
+        limit: 10,
+        offset: 0,
+      },
+    }).then((res) => {
+      //总个数
+      this.total = res.data.total;
+      this.comments = res.data.comments;
+      console.log(res);
     });
   },
   methods: {
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.page = val;
+      // console.log(`当前页: ${val}`);
+      //重新获取数据
+      axios({
+        method: "get",
+        url: "https://autumnfish.cn/comment/playlist",
+        params: {
+          id: this.$route.query.q,
+          limit: 10,
+          //根据页码计算
+          offset: (this.page - 1) * 10,
+        },
+      }).then((res) => {
+        //总个数
+        this.total = res.data.total;
+        this.comments = res.data.comments;
+        console.log(res);
+      });
     },
   },
 };
