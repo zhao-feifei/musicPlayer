@@ -61,13 +61,18 @@
       </el-tab-pane>
       <el-tab-pane label="MV" name="mv">
         <div class="items mv">
-          <div v-for="(item, index) in mv" :key="index" class="item">
+          <div
+            v-for="(item, index) in mv"
+            :key="index"
+            class="item"
+            @click="toMv(item.id)"
+          >
             <div class="img-wrap">
               <img :src="item.cover" alt="" />
               <span class="iconfont icon-play"></span>
               <div class="num-wrap">
                 <div class="iconfont icon-play"></div>
-                <div class="num">{{ iten.playCount }}</div>
+                <div class="num">{{ item.count }}</div>
               </div>
               <span class="time">{{ item.duration }}</span>
             </div>
@@ -229,6 +234,10 @@ export default {
     },
   },
   methods: {
+    //去mv详情页面
+    toMv(id) {
+      this.$router.push(`/mv?q=${id}`);
+    },
     // 去歌单详情页面
     toPlaylist(id) {
       this.$router.push(`/playlist?q=${id}`);
