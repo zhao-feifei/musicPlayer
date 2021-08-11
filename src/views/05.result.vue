@@ -41,7 +41,12 @@
       </el-tab-pane>
       <el-tab-pane label="歌单" name="lists">
         <div class="items">
-          <div v-for="(item, index) in playlists" :key="index" class="item">
+          <div
+            v-for="(item, index) in playlists"
+            :key="index"
+            class="item"
+            @click="toPlaylist(item.id)"
+          >
             <div class="img-wrap">
               <div class="num-wrap">
                 播放量:
@@ -162,7 +167,6 @@ export default {
       }).then((res) => {
         //获取的是歌曲
         if (type == 1) {
-         
           this.songList = res.data.result.songs;
           //处理时间格式
           for (let i = 0; i < this.songList.length; i++) {
@@ -225,6 +229,10 @@ export default {
     },
   },
   methods: {
+    // 去歌单详情页面
+    toPlaylist(id) {
+      this.$router.push(`/playlist?q=${id}`);
+    },
     playMusic(id) {
       axios({
         method: "get",

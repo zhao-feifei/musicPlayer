@@ -2,14 +2,23 @@
   <div class="playlist-container">
     <div class="top-wrap">
       <div class="img-wrap">
-        <img src="../assets/playListCover.jpg" alt="" />
+        <!-- 封面 -->
+        <img :src="playlist.coverImgUrl" alt="" />
       </div>
       <div class="info-wrap">
-        <p class="title">俗世里的烟火气|总有些瞬间 让你热泪盈眶</p>
+        <p class="title">{{ playlist.name }}</p>
         <div class="author-wrap">
-          <img class="avatar" src="../assets/avatar.jpg" alt="" />
-          <span class="name">原创君</span>
-          <span class="time">2020-2-26 创建</span>
+          <!-- 头像 -->
+          <img
+            v-if="playlist.creator"
+            class="avatar"
+            :src="playlist.creator.avatarUrl"
+            alt=""
+          />
+          <span v-if="playlist.creator" class="name">{{
+            playlist.creator.nickname
+          }}</span>
+          <span class="time">{{ playlist.createTime }} 创建</span>
         </div>
         <div class="play-wrap">
           <span class="iconfont icon-circle-play"></span>
@@ -17,20 +26,16 @@
         </div>
         <div class="tag-wrap">
           <span class="title">标签:</span>
+          <!-- 分类标签 -->
           <ul>
-            <li>华语</li>
-            <li>怀旧</li>
-            <li>感动</li>
+            <li v-for="(item, index) in playlist.tags" :key="index">
+              {{ item }}
+            </li>
           </ul>
         </div>
         <div class="desc-wrap">
           <span class="title">简介:</span>
-          <span class="desc"
-            >你是否曾在某个瞬间 被一次日落击中心中最柔软的部分 曾在回家途中
-            被袅袅升起的饭菜香味感动得热泪盈眶？ 生活或许有时不尽如人意
-            却总有一些叫“烟火气”的东西 使得我们在这个俗世中 依然保持希望
-            封面来自网络</span
-          >
+          <span class="desc">{{ playlist.description }}</span>
         </div>
       </div>
     </div>
@@ -43,49 +48,33 @@
             <th>音乐标题</th>
             <th>歌手</th>
             <th>专辑</th>
-            <th>时长</th>
+            <!-- <th>时长</th> -->
           </thead>
           <tbody>
-            <tr class="el-table__row">
-              <td>1</td>
+            <tr
+              v-for="(item, index) in playlist.tracks"
+              :key="index"
+              class="el-table__row"
+            >
+              <td>{{ index + 1 }}</td>
               <td>
                 <div class="img-wrap">
-                  <img src="../assets/songCover.jpg" alt="" />
+                  <img :src="item.al.picUrl" alt="" />
                   <span class="iconfont icon-play"></span>
                 </div>
               </td>
               <td>
                 <div class="song-wrap">
                   <div class="name-wrap">
-                    <span>你要相信这不是最后一天</span>
+                    <span>{{ item.al.name }}</span>
                     <span class="iconfont icon-mv"></span>
                   </div>
-                  <span>电视剧加油练习生插曲</span>
+                  <!-- <span>电视剧加油练习生插曲</span> -->
                 </div>
               </td>
-              <td>华晨宇</td>
-              <td>你要相信这不是最后一天</td>
-              <td>06:03</td>
-            </tr>
-            <tr class="el-table__row">
-              <td>2</td>
-               <td>
-                <div class="img-wrap">
-                  <img src="../assets/songCover.jpg" alt="" />
-                  <span class="iconfont icon-play"></span>
-                </div>
-              </td>
-              <td>
-                <div class="song-wrap">
-                  <div class="name-wrap">
-                    <span>你要相信这不是最后一天</span>
-                    <span class="iconfont icon-mv"></span>
-                  </div>
-                </div>
-              </td>
-              <td>华晨宇</td>
-              <td>你要相信这不是最后一天</td>
-              <td>06:03</td>
+              <td>{{ item.ar[0].name }}</td>
+              <td>{{ item.name }}</td>
+              <!-- <td>06:03</td> -->
             </tr>
           </tbody>
         </table>
@@ -183,25 +172,38 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
-  name: 'playlist',
+  name: "playlist",
   data() {
     return {
-      activeIndex: '1',
+      activeIndex: "1",
       // 总条数
       total: 0,
       // 页码
-      page: 1
+      page: 1,
+      //歌单详情数据
+      playlist: {},
     };
+  },
+  created() {
+    axios({
+      method: "get",
+      url: "https://autumnfish.cn/playlist/detail",
+      params: {
+        id: this.$route.query.q,
+      },
+    }).then((res) => {
+      this.playlist = res.data.playlist;
+      console.log(this.playlist);
+    });
   },
   methods: {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style >
-
-</style>
+<style></style>
